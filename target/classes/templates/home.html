@@ -1,0 +1,112 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+	<title>Sauna Reservation</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<link type="text/css" rel="stylesheet" href="bootstrap.min.css" th:href="@{css/bootstrap.min.css}" />
+	<link type="text/css" rel="stylesheet" href="style.css" th:href="@{css/style.css}"/>
+</head>
+<body>
+	<div class="main" style="margin: 10px auto; min-width: 800px; max-width: 1200px;">
+		<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+      <a class="navbar-brand" href="#">Saunavaraus.fi</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample04" aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarsExample04">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#">Oma asiointi <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Vuorokalenteri</a>
+          </li>
+        </ul>
+        <form class="form-inline my-2 my-md-0" th:action="@{/logout}" method="post">
+			<input type="submit" value="Kirjaudu ulos" class="btn btn-sm btn-danger"/>
+		</form>
+      </div>
+    </nav>
+		<div class="row">
+			<div class="col-md-6">
+				<h1 th:inline="text">Tervetuloa [[${#httpServletRequest.remoteUser}]] !</h1>
+				<p>Hauska nähdä jälleen.</p>
+			</div>
+			<div class="col-md-6">
+				<h2>Varausjärjestelmä</h2>
+				<p>Täällä voit varata vuoron saunoihimme!</p>
+			</div>
+		</div>
+		<h3>Omat vuorot</h3>
+		<table class="table table-striped">
+			<tr>
+				<th>Pvm ja aika</th>
+				<th>Sauna</th>
+				<th>Hinta (€)</th>
+				<th></th>
+				<th></th>
+			</tr>
+			<tr th:each = "reservation : ${reservations}">
+				<td th:text="${#dates.format(reservation.slot.datetime, 'dd.MM.yyyy HH')}">klo<p th:text="${#dates.format(reservation.slot.datetime, 'dd.MM.yyyy HH')}"></p></td>
+				<td th:text="${reservation.slot.sauna.name}"></td>
+				<td th:text="${reservation.slot.price}"></td>
+				<td><a class="btn btn-info" href="#" th:href="'/reservations/modify/' + ${reservation.id}">Muuta vuoroa</a></td>
+				<td><a class="btn btn-warning" href="#" th:href="'/api/reservations/cancel/' + ${reservation.id}" th:object="${reservation.slot}">Peruuta vuoro</a></td>
+			</tr>
+		</table>
+		<h3>Hae vapaita vuoroja</h3>
+		<form th:action="@{/reservations/search}" method="post">
+		<div class="row">
+		<div class="form-group col-md-4">
+		<label for="date">Päivämäärä</label>
+		<div class="input-group mb-3">
+			<input type="date" name="date" id="date" class="form-control" aria-label="Text input with segmented dropdown button">
+		</div>
+		</div>
+		<div class="form-group col-md-4">
+		<label for="time">Klo</label>
+		<div class="input-group mb-3">
+			<input type="time" name="time" id="time" class="form-control" aria-label="Text input with segmented dropdown button">
+		</div>
+		</div>
+		<div class="form-group col-md-4">
+		<label for="space">Kapasiteetti</label>
+		<div class="input-group mb-3">
+			<select name="space" id="space" class="form-select" aria-label="Default select example">
+			  <option selected>Valitse hlö määrä</option>
+			  <option value="small">5 tai alle (pieni sauna)</option>
+			  <option value="big">5 tai yli (iso sauna)</option>
+			</select>
+		</div>
+		</div>
+		</div>
+		<input type="submit" value="Etsi vapaita saunoja" class="btn btn-sm btn-success"/>
+		</form>
+		<h3>Vapaat vuorot</h3>
+		<p>Hakuehdoillasi löytyi seuraavia vapaita vuoroja, valitse yksi ja jatka varaukseen.</p>
+		<table class="table table-striped">
+			<tr>
+				<th>Pvm ja aika</th>
+				<th>Sauna</th>
+				<th>Koko</th>
+				<th>Kapasiteetti (hlö)</th>
+				<th>Kerhotila</th>
+				<th>Hinta (€)</th>
+				<th></th>
+				<th sec:authorize="hasAuthority('ADMIN')"></th>
+			</tr>
+			<tr th:each = "reservation : ${slots}">
+				<td th:text="${#dates.format(reservation.datetime, 'dd.MM.yyyy HH:mm')}"></td>
+				<td th:text="${reservation.sauna.name}"></td>
+				<td th:text="${reservation.sauna.size}"></td>
+				<td th:text="${reservation.sauna.capacity}"></td>
+				<td th:text="${reservation.sauna.clubspace}"></td>
+				<td th:text="${reservation.price}"></td>
+				<td><a class="btn btn-info" href="#" th:href="'/reservations/book/' + ${reservation.id}">Varaa</a></td>
+				<td sec:authorize="hasAuthority('ADMIN')"><a class="btn btn-danger" href="#" th:href="'/reservations/remove/' + ${reservation.id}">Poista vuoro</a></td>
+			</tr>
+		</table>
+	</div>
+</body>
+</html>
