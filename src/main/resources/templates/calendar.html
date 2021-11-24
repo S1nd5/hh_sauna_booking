@@ -18,7 +18,7 @@
     	  
     	let events = [];
     	
-    	fetch('http://localhost:8080/api/reservations')
+    	fetch('/api/reservations')
         .then(response => response.json())
         .then(data => {
         	data.map(reservation => {
