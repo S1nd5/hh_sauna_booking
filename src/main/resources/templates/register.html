@@ -1,21 +1,81 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
-    <title>Customerlist</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Saunavaraus</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta charset="UTF-8">
+	<link type="text/css" rel="stylesheet" href="bootstrap.min.css" th:href="@{../../css/bootstrap.min.css}" />
+	<link type="text/css" rel="stylesheet" href="style.css" th:href="@{../../css/style.css}"/>
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+	<script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
+    <link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
-	<h1>Add Customer</h1>
-	<div>
-		<form th:object="${customer}" th:action="@{save}" action="#" method="post">
-		  	<label for="fname">Firstname</label>
-			<input type="text" id="fname" th:field="*{firstName}" />
-			<div style="clear: both; display: block; height: 10px;"></div>
-		  	<label for="lname">Lastname</label>
-			<input type="text" id="lname" th:field="*{lastName}" />
-			<div style="clear: both; display: block; height: 10px;"></div>
-			<input type="submit" value="Save"></input>
+	<div class="main" style="margin: 10px auto; min-width: 800px; max-width: 1200px;">
+		<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+      <a class="navbar-brand" href="#">Saunavaraus.fi</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample04" aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarsExample04">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/login">Kirjautuminen</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/calendar">Vuorokalenteri</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+		<div class="row">
+			<div class="logo col-md-12">
+				<img id="logo" src="https://images.squarespace-cdn.com/content/v1/5e41738478eb0f389ed68695/1616698034590-SNA8F4XYFYFIHZTQ8WX1/sauna-logo.png">
+			</div>
+		</div>
+		<h1>Saunavaraus - Rekisteröityminen</h1>
+		<p>Ole hyvä ja täytä alla olevat kentät rekisteröidäksesi käyttäjätunnuksen palveluumme.</p>
+				<form th:object="${registerForm}" th:action="@{/registeruser}" action="#" method="post">
+			<div>
+				<label> Sähköpostiosoite:<input type="text" th:field="*{username}" class="form-control" required/></label>
+				<p th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Email Error</p>	
+			</div>
+			<div>
+				<label> Salasana:<input type="password" th:field="*{password}" class="form-control" required/></label>
+				<p th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error</p>	
+			</div>
+			<div>
+				<label> Salasana uudelleen: <input type="password" th:field="*{passwordCheck}" class="form-control" required/></label>
+				<p th:if="${#fields.hasErrors('passwordCheck')}" th:errors="*{passwordCheck}">Password Match Error</p>	
+			</div>
+			<div>
+				<label> Etuninimi:<input type="text" th:field="*{firstname}" class="form-control" required/></label>
+				<p th:if="${#fields.hasErrors('firstname')}" th:errors="*{firstname}">Name Error</p>	
+			</div>
+			<div>
+				<label> Sukunimi:<input type="text" th:field="*{lastname}" class="form-control" required/></label>
+				<p th:if="${#fields.hasErrors('lastname')}" th:errors="*{lastname}">Name Error</p>	
+			</div>
+			<div>
+				<label> Puhelinnumero:<input type="text" th:field="*{phonenumber}" class="form-control"/></label>
+				<p th:if="${#fields.hasErrors('phonenumber')}" th:errors="*{phonenumber}">Name Error</p>	
+			</div>
+			<div>
+				<label> Asuinhuoneisto:<input type="text" th:field="*{apartment}" class="form-control"/></label>
+				<p th:if="${#fields.hasErrors('apartment')}" th:errors="*{apartment}">Name Error</p>	
+			</div>
+			<div class="g-recaptcha" data-sitekey="6Le7klgdAAAAAMScy_Fz6k7h76snMwiZppwnRz6j" data-callback="enableFormSubmit"></div>
+			<input type="submit" id="submitBtn" class="btn btn-lg btn-primary" value="Rekisteröidy" disabled></input>		
 		</form>
+		<br>
+		<a class="btn btn-sm btn-info" th:href="@{/}">Takaisin kirjautumiseen</a>
 	</div>
+	<script>
+		function enableFormSubmit() {
+			document.getElementById("submitBtn").disabled = false;
+		}
+	</script>
 </body>
 </html>

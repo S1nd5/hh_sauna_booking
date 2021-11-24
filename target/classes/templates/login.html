@@ -1,26 +1,51 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
-    <head>
-        <title>Sauna - Login</title>
-        <link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css" th:href="@{css/bootstrap.min.css}" />
-    </head>
-    <body>
-     <div class="col-md-4 col-md-offset-4" style="margin: 10px auto; min-width: 800px; max-width: 1200px;">
-    	<h1>Login to Sauna Reservation System</h1>
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+	<title>Saunavaraus</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta charset="UTF-8">
+	<link type="text/css" rel="stylesheet" href="bootstrap.min.css" th:href="@{../../css/bootstrap.min.css}" />
+	<link type="text/css" rel="stylesheet" href="style.css" th:href="@{../../css/style.css}"/>
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+	<script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
+    <link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+	<div class="main" style="margin: 10px auto; min-width: 800px; max-width: 1200px;">
+		<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+      <a class="navbar-brand" href="#">Saunavaraus.fi</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample04" aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarsExample04">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/calendar">Vuorokalenteri</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+		<div class="row">
+			<div class="logo col-md-12">
+				<img id="logo" src="https://images.squarespace-cdn.com/content/v1/5e41738478eb0f389ed68695/1616698034590-SNA8F4XYFYFIHZTQ8WX1/sauna-logo.png">
+			</div>
+		</div>
+		<h1>Saunavaraus - Kirjautuminen</h1>
+		<p>Ole hyvä ja jatka kirjautumalla olemassa olevalle tunnukselle tai rekisteröi uusi tunnus. <br><strong>Sähköpostiosoite toimii käyttäjätunnuksena.</strong></p>
         <div class="alert alert-danger" th:if="${param.error}">
-            Invalid username and password.
+            Virheellinen käyttäjätunnus ja salasana.
         </div>
         <div class="alert alert-warning" th:if="${param.logout}">
-            You have been logged out.
+            Olet kirjautunut ulos järjestelmästä.
         </div>
         <form th:action="@{/login}" method="post">
-            <div><label> Username: <input type="text" name="username" class="form-control"/> </label></div>
-            <div><label> Password: <input type="password" name="password" class="form-control"/> </label></div>
-            <div><input type="submit" value="Login" class="btn btn-primary"/></div>
+            <div class="input-group mb-3"><label> Käyttäjätunnus: <input type="text" name="username" class="form-control" required/> </label></div>
+            <div class="input-group mb-3"><label> Salasana: <input type="password" name="password" class="form-control" required/> </label></div>
+            <div><input type="submit" value="Kirjaudu" class="btn btn-lg btn-primary"/></div>
         </form>
         <br>
-        <a class="btn btn-info" th:href="@{/signup}">Register user</a>
-       </div>
-    </body>
+        <a class="btn btn-sm btn-info" th:href="@{/register}">Rekisteröidy palveluun</a>
+	</div>
+</body>
 </html>

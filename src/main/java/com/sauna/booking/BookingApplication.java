@@ -3,9 +3,6 @@ package com.sauna.booking;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -19,8 +16,7 @@ import com.sauna.booking.domain.Sauna;
 import com.sauna.booking.domain.SaunaDAO;
 import com.sauna.booking.domain.User;
 import com.sauna.booking.domain.UserDAO;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.time.LocalDateTime;
 @SpringBootApplication
 @ComponentScan(basePackages = {"com.sauna.booking"})
 public class BookingApplication {
@@ -41,24 +37,23 @@ public class BookingApplication {
 			
 			//User data
 			
-			User user1 = new User("user", "$2a$12$fgUkahGWGyWXx8fT08ix8uVOPi7b/gieCVpSoOjytMGHG5E.3Tuue", "USER");
-			User user2 = new User("admin", "$2a$12$5nDhI9lcAjEdlGD4P40.jerKOXuGbWfn/HFIawRuO/yzYKU54y2Ty", "ADMIN");
+			/*User user1 = new User("Testi", "Useri", "user", "$2a$12$fgUkahGWGyWXx8fT08ix8uVOPi7b/gieCVpSoOjytMGHG5E.3Tuue", "USER");
+			User user2 = new User("Testi", "Ylläpitäjä", "admin", "$2a$12$5nDhI9lcAjEdlGD4P40.jerKOXuGbWfn/HFIawRuO/yzYKU54y2Ty", "ADMIN");
 			userRepository.save(user1);
 			userRepository.save(user2);
 			
 			// Dates
 			
-			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:00");
-	        Date date = new Date();
+	        LocalDateTime date = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
 	        
-	        Calendar c = Calendar.getInstance();
-	        c.setTime(date);
-			
-			c.add(Calendar.HOUR, 1);
-			Date toinenAika = c.getTime();
-			
-			c.add(Calendar.HOUR, 1);
-			Date kolmasAika = c.getTime();
+	        LocalDateTime toinenAika = date.withHour(18);
+	        LocalDateTime kolmasAika = date.plusHours(19);
+	        LocalDateTime neljasAika = date.plusHours(20);
+	        
+	        LocalDateTime date2 = LocalDateTime.now().withMinute(0).withSecond(0).withNano(0);
+	        LocalDateTime viidesAika = date2.plusDays(1).withHour(18);
+	        LocalDateTime kuudesAika = viidesAika.plusHours(1);
+	        
 			// Saunas
 			
 			Sauna bSauna = new Sauna("B-talon sauna", "B-rappu", "Suuri", 15, 1);
@@ -74,9 +69,36 @@ public class BookingApplication {
 			ReservationSlot uusiVuoro3 = new ReservationSlot(kolmasAika, 0, 0, aSauna);
 			reservationSlotRepo.save(uusiVuoro3);
 			
+			// Vuorot seur pv.
+			reservationSlotRepo.save(new ReservationSlot(neljasAika, 0,0, bSauna));
+			
+			// Vuorot seur pv.
+			reservationSlotRepo.save(new ReservationSlot(viidesAika, 0,0, aSauna));
+			
+			// Vuorot seur pv.
+			reservationSlotRepo.save(new ReservationSlot(kuudesAika, 0,0, aSauna));
+			
+			// Vuorot pidemmalla pv.
+			reservationSlotRepo.save(new ReservationSlot(kuudesAika.plusDays(1).withHour(18), 0,0, aSauna));
+			
+			// Vuorot pidemmalla pv.
+			reservationSlotRepo.save(new ReservationSlot(kuudesAika.plusDays(1).withHour(19), 0,0, aSauna));
+			
+			// Vuorot pidemmalla pv.
+			reservationSlotRepo.save(new ReservationSlot(kuudesAika.plusDays(2).withHour(18), 0,0, aSauna));
+			
+			// Vuorot pidemmalla pv.
+			reservationSlotRepo.save(new ReservationSlot(kuudesAika.plusDays(2).withHour(19), 0,0, aSauna));
+			
+			// Vuorot pidemmalla pv.
+			reservationSlotRepo.save(new ReservationSlot(kuudesAika.plusDays(3).withHour(18), 0,0, bSauna));
+			
+			// Vuorot pidemmalla pv.
+			reservationSlotRepo.save(new ReservationSlot(kuudesAika.plusDays(3).withHour(19), 0,0, bSauna));
+			
 			// Varaus
 			Reservation uusiVaraus = new Reservation(uusiVuoro, user1);
-			reservationRepository.save(uusiVaraus);
+			reservationRepository.save(uusiVaraus);*/
 		};
 	}
 }

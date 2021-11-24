@@ -1,5 +1,8 @@
 package com.sauna.booking.domain;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -7,11 +10,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Table(name ="reservation_slots")
@@ -22,21 +24,24 @@ public class ReservationSlot {
 	@Column(name = "id", nullable = false, updatable = false)
 	private long id;
 	
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date datetime;
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+	//@Temporal(TemporalType.TIMESTAMP)
+	private LocalDateTime datetime;
 	
 	private int type;
 	private int status;
 	private double price;
 	
-	@JsonBackReference
+	@OneToMany(mappedBy = "id", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Reservation> reservations;
+	
 	@ManyToOne
 	@JoinColumn(name = "sauna_id")
 	private Sauna sauna;
 	
 	public ReservationSlot () {}
 	
-	public ReservationSlot(Date datetime, int type, Sauna sauna) {
+	public ReservationSlot(LocalDateTime datetime, int type, Sauna sauna) {
 		super();
 		this.datetime = datetime;
 		this.type = type;
@@ -46,7 +51,7 @@ public class ReservationSlot {
 	}
 	
 	
-	public ReservationSlot(Date datetime, int type, int status, Sauna sauna) {
+	public ReservationSlot(LocalDateTime datetime, int type, int status, Sauna sauna) {
 		super();
 		this.datetime = datetime;
 		this.type = type;
@@ -69,10 +74,10 @@ public class ReservationSlot {
 	public void setId(long id) {
 		this.id = id;
 	}
-	public Date getDatetime() {
+	public LocalDateTime getDatetime() {
 		return datetime;
 	}
-	public void setDatetime(Date datetime) {
+	public void setDatetime(LocalDateTime datetime) {
 		this.datetime = datetime;
 	}
 	public int getType() {

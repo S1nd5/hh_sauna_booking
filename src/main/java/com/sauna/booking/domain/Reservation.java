@@ -1,5 +1,6 @@
 package com.sauna.booking.domain;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,8 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name ="reservations")
@@ -20,12 +19,10 @@ public class Reservation {
 	@Column(name = "id", nullable = false, updatable = false)
 	private long id;
 	
-	@JsonBackReference
 	@ManyToOne
 	@JoinColumn(name = "reservationslot_id")
 	private ReservationSlot slot;
 	
-	@JsonBackReference
 	@ManyToOne
 	@JoinColumn(name = "subscriber_id")
 	private User subscriber;

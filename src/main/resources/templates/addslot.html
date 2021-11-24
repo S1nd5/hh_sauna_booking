@@ -1,0 +1,81 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+	<title>Vuoron luonti - Saunavaraus</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta charset="UTF-8">
+	<link type="text/css" rel="stylesheet" href="bootstrap.min.css" th:href="@{../../css/bootstrap.min.css}" />
+	<link type="text/css" rel="stylesheet" href="style.css" th:href="@{../../css/style.css}"/>
+	<script type="text/javascript" th:src="@{../../js/main.js}" defer></script>
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+	<script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
+    <link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+</head>
+<body onload="initAdding()">
+	<div class="main" style="margin: 10px auto; min-width: 800px; max-width: 1200px;">
+		<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+      <a class="navbar-brand" href="#">Saunavaraus.fi</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample04" aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarsExample04">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/home">Oma asiointi</a>
+          </li>
+          <li sec:authorize="hasAuthority('ADMIN')" class="nav-item active">
+          	<a class="nav-link" href="/addslot">Vuoron luonti</a>
+          </li>
+          <li sec:authorize="hasAuthority('ADMIN')" class="nav-item">
+          	<a class="nav-link" href="/addsauna">Saunan luonti</a>
+          </li>
+          <li sec:authorize="hasAuthority('ADMIN')" class="nav-item">
+          	<a class="nav-link" href="/management">Vuorohallinta</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/calendar">Vuorokalenteri</a>
+          </li>
+        </ul>
+        <form class="form-inline my-2 my-md-0" th:action="@{/logout}" method="post">
+			<input type="submit" value="Kirjaudu ulos" class="btn btn-sm btn-danger"/>
+		</form>
+      </div>
+    </nav>
+		<div class="row">
+			<div class="logo col-md-12">
+				<img id="logo" src="https://images.squarespace-cdn.com/content/v1/5e41738478eb0f389ed68695/1616698034590-SNA8F4XYFYFIHZTQ8WX1/sauna-logo.png">
+			</div>
+		</div>
+		<h3>Lisää vuoro</h3>
+		<p>Tällä sivulla voit luoda uuden varattavan vuoron asukkaille.</p>
+			<form action="#" th:action="@{/saveslot}" th:object="${slot}" method="post" onsubmit="fillHiddenDate()">
+			<div class="form-group">
+				<label for="author">* Pvm:</label>
+				<input id="datepicker" pattern="\d{4}-\d{2}-\d{2}" required/>
+				<label for="time">* Klo</label>
+				<input id="timepicker" pattern="^[0-9]{2}$" required/>
+				<span>Pakollinen kenttä.</span><br>
+				<strong>Huom. vuorot ovat tasatunneittain. Älä häiriinny minuuttien valitsemisesta, järjestelmä asettaa vuoron valitulle tasatunnille luonnin yhteydessä.</strong><br>
+				<input id="datetime" class="form-control" type="hidden" step=3600 th:field="*{datetime}"/>
+			</div>
+			<div class="form-group">
+				<label for="author">* Hinta:</label>
+				<input class="form-control" type="text" th:field="*{price}" pattern="\d*[.]?\d+" required/>
+				<span>Pakollinen kenttä.</span><br>
+			</div>
+			<div class="form-group">
+			<label for="saunas">* Sauna</label>
+				<select id="sauna" th:field="*{sauna}" type="number" class="form-control" required>
+				 <option th:each="sauna: ${saunas}" th:value="${sauna.id}"
+				 th:text="${sauna.name}"></option>
+				</select>
+				<span>Pakollinen kenttä.</span><br>
+			</div>
+			<div th:if="${msg}" th:text="${msg}" class="alert alert-danger" role="alert"></div>
+			<a class="btn btn-info" href="/home">Takaisin</a>
+			<input class="btn btn-success" type="submit" value="Lisää uusi vuoro"/>
+		</form> 
+	</div>
+</body>
+</html>

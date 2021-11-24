@@ -1,12 +1,14 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
-	<title>Sauna Reservation</title>
+	<title>Saunavaraus</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<link type="text/css" rel="stylesheet" href="bootstrap.min.css" th:href="@{css/bootstrap.min.css}" />
-	<link type="text/css" rel="stylesheet" href="style.css" th:href="@{css/style.css}"/>
+	<meta charset="UTF-8">
+	<link type="text/css" rel="stylesheet" href="bootstrap.min.css" th:href="@{../css/bootstrap.min.css}" />
+	<link type="text/css" rel="stylesheet" href="style.css" th:href="@{../css/style.css}"/>
+	<script type="text/javascript" th:src="@{../js/main.js}"></script>
 </head>
-<body>
+<body onload="setCurrentValues()">
 	<div class="main" style="margin: 10px auto; min-width: 800px; max-width: 1200px;">
 		<nav class="navbar navbar-expand-md navbar-dark bg-dark">
       <a class="navbar-brand" href="#">Saunavaraus.fi</a>
@@ -17,10 +19,19 @@
       <div class="collapse navbar-collapse" id="navbarsExample04">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item active">
-            <a class="nav-link" href="#">Oma asiointi <span class="sr-only">(current)</span></a>
+            <a class="nav-link" href="/home">Oma asiointi <span class="sr-only">(current)</span></a>
+          </li>
+          <li sec:authorize="hasAuthority('ADMIN')" class="nav-item">
+          	<a class="nav-link" href="/addslot">Vuoron luonti</a>
+          </li>
+          <li sec:authorize="hasAuthority('ADMIN')" class="nav-item">
+          	<a class="nav-link" href="/addsauna">Saunan luonti</a>
+          </li>
+          <li sec:authorize="hasAuthority('ADMIN')" class="nav-item">
+          	<a class="nav-link" href="/management">Vuorohallinta</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Vuorokalenteri</a>
+            <a class="nav-link" href="/calendar">Vuorokalenteri</a>
           </li>
         </ul>
         <form class="form-inline my-2 my-md-0" th:action="@{/logout}" method="post">
@@ -29,16 +40,21 @@
       </div>
     </nav>
 		<div class="row">
-			<div class="col-md-6">
-				<h1 th:inline="text">Tervetuloa [[${#httpServletRequest.remoteUser}]] !</h1>
-				<p>Hauska nähdä jälleen.</p>
+			<div class="logo col-md-4">
+				<img id="logo" src="https://images.squarespace-cdn.com/content/v1/5e41738478eb0f389ed68695/1616698034590-SNA8F4XYFYFIHZTQ8WX1/sauna-logo.png">
 			</div>
-			<div class="col-md-6">
-				<h2>Varausjärjestelmä</h2>
-				<p>Täällä voit varata vuoron saunoihimme!</p>
+			<div class="col-md-8">
+				<h1 th:inline="text">Tervetuloa [[${fullname}]] !</h1>
+				<p>Hauska nähdä jälleen, tervetuloa varaamaan saunaa.</p>
 			</div>
 		</div>
+		<div class="alert alert-success" role="alert" th:text="${success}" th:if="${success}"></div>
+		<div class="alert alert-danger" role="alert" th:text="${error}" th:if="${error}"></div>
 		<h3>Omat vuorot</h3>
+		<p>Tässä osiossa näet omat vuorot, jotka ovat varattuna sinulle. Voit pidentää vuorojasi tai peruuttaa vuoroja tästä.</p>
+		<div th:if="${reservations.size() < 1}" class="alert alert-info" role="alert">
+		  Huomio: <strong>sinulla ei ole vielä yhtään omia vuoroja varattuna.</strong>
+		</div>
 		<table class="table table-striped">
 			<tr>
 				<th>Pvm ja aika</th>
@@ -48,43 +64,51 @@
 				<th></th>
 			</tr>
 			<tr th:each = "reservation : ${reservations}">
-				<td th:text="${#dates.format(reservation.slot.datetime, 'dd.MM.yyyy HH')}">klo<p th:text="${#dates.format(reservation.slot.datetime, 'dd.MM.yyyy HH')}"></p></td>
+				<td th:text="${#temporals.format(reservation.slot.datetime, 'dd.MM.yyyy HH:mm')}">klo<p th:text="${#temporals.format(reservation.slot.datetime, 'dd.MM.yyyy HH')}"></p></td>
 				<td th:text="${reservation.slot.sauna.name}"></td>
 				<td th:text="${reservation.slot.price}"></td>
-				<td><a class="btn btn-info" href="#" th:href="'/reservations/modify/' + ${reservation.id}">Muuta vuoroa</a></td>
-				<td><a class="btn btn-warning" href="#" th:href="'/api/reservations/cancel/' + ${reservation.id}" th:object="${reservation.slot}">Peruuta vuoro</a></td>
+				<td><a class="btn btn-info" href="#" th:href="'/reservations/extend/' + ${reservation.id}">Jatka vuoroa</a></td>
+				<td><a class="btn btn-info" href="#" th:href="'/reservations/cancel/' + ${reservation.id}">Peruuta vuoro</a></td>
 			</tr>
 		</table>
 		<h3>Hae vapaita vuoroja</h3>
-		<form th:action="@{/reservations/search}" method="post">
-		<div class="row">
-		<div class="form-group col-md-4">
-		<label for="date">Päivämäärä</label>
-		<div class="input-group mb-3">
-			<input type="date" name="date" id="date" class="form-control" aria-label="Text input with segmented dropdown button">
-		</div>
-		</div>
-		<div class="form-group col-md-4">
-		<label for="time">Klo</label>
-		<div class="input-group mb-3">
-			<input type="time" name="time" id="time" class="form-control" aria-label="Text input with segmented dropdown button">
-		</div>
-		</div>
-		<div class="form-group col-md-4">
-		<label for="space">Kapasiteetti</label>
-		<div class="input-group mb-3">
-			<select name="space" id="space" class="form-select" aria-label="Default select example">
-			  <option selected>Valitse hlö määrä</option>
-			  <option value="small">5 tai alle (pieni sauna)</option>
-			  <option value="big">5 tai yli (iso sauna)</option>
-			</select>
-		</div>
-		</div>
-		</div>
-		<input type="submit" value="Etsi vapaita saunoja" class="btn btn-sm btn-success"/>
+		<p>Voit hakea vapaita vuoroja ajankohdalla ja saunan koon perusteella. Haun jälkeen sinulle esitetään parhaat vapaat vuorot antamiesi hakuparametrien perusteella.</p>
+		<form th:action="@{/reservations/search}" action="#" method="GET">
+			<div class="row">
+				<div class="form-group col-md-4">
+					<label for="date">* Päivämäärä</label>
+					<div class="input-group mb-3">
+						<input th:value="${givenDate}" type="date" name="date" id="date" class="form-control" aria-label="Text input with segmented dropdown button" required></input>
+					</div>
+				</div>
+				<div class="form-group col-md-4">
+					<label for="time">* Klo</label>
+					<div class="input-group mb-3">
+						<input th:value="${givenTime}" type="time" name="time" id="time" class="form-control" step=3600 aria-label="Text input with segmented dropdown button" required></input>
+					</div>
+				</div>
+				<div class="form-group col-md-4">
+					<label for="space">* Kapasiteetti & henkilömäärä</label>
+					<div class="form-group">
+					<select name="space" id="space" class="selectpicker form-control form-select" required>
+						 <option th:each="sauna: ${saunas}" th:value="${sauna.size}"
+						 th:text="${sauna.name} + ', (max ' + ${sauna.capacity} + ' hlö, ' +  ${sauna.size} + ' sauna)'"></option>
+					</select>
+					</div>
+				</div>
+			</div>
+			<button type="submit" value="submit" id="submitBtn" class="btn btn-lg btn-success">Etsi vapaita vuoroja annetuilla parametreilla</button>
+			<button type="button" id="submitBtn" class="btn btn-lg btn-success" onClick="location.href='/home'">Hae kaikki vapaat vuorot</button>
+			<br></br>
 		</form>
 		<h3>Vapaat vuorot</h3>
-		<p>Hakuehdoillasi löytyi seuraavia vapaita vuoroja, valitse yksi ja jatka varaukseen.</p>
+		<p>Tähän osioon ilmestyvät näkyviin oletuksena yleisesti vapaat vuorot ja myös tekemiesi hakujen perusteella olevat vapaat vuorot.</p>
+		<div th:if="${slots.size() < 1}" class="alert alert-warning" role="alert">
+		  Huomio: <strong>hakuehdoillasi ei löytynyt vapaita vuoroja.</strong>
+		</div>
+		<div th:if="${slots.size() > 0}" class="alert alert-success" role="alert">
+		  Huomio: <strong>Hakuehdoillasi löytyi seuraavia vapaita vuoroja, valitse yksi ja jatka varaukseen painamalla "varaa"</strong>
+		</div>
 		<table class="table table-striped">
 			<tr>
 				<th>Pvm ja aika</th>
@@ -95,15 +119,20 @@
 				<th>Hinta (€)</th>
 				<th></th>
 				<th sec:authorize="hasAuthority('ADMIN')"></th>
+				<th sec:authorize="hasAuthority('ADMIN')"></th>
 			</tr>
 			<tr th:each = "reservation : ${slots}">
-				<td th:text="${#dates.format(reservation.datetime, 'dd.MM.yyyy HH:mm')}"></td>
+				<td th:text="${#temporals.format(reservation.datetime, 'dd.MM.yyyy HH:mm')}"></td>
 				<td th:text="${reservation.sauna.name}"></td>
 				<td th:text="${reservation.sauna.size}"></td>
 				<td th:text="${reservation.sauna.capacity}"></td>
-				<td th:text="${reservation.sauna.clubspace}"></td>
+				<td th:switch="${reservation.sauna.clubspace}">
+					<p th:case="0">Ei ole</p>
+				    <p th:case="1">Kyllä</p>
+				</td>
 				<td th:text="${reservation.price}"></td>
 				<td><a class="btn btn-info" href="#" th:href="'/reservations/book/' + ${reservation.id}">Varaa</a></td>
+				<td sec:authorize="hasAuthority('ADMIN')"><a class="btn btn-primary" href="#" th:href="'/reservations/modify/' + ${reservation.id}">Muokkaa vuoroa</a></td>
 				<td sec:authorize="hasAuthority('ADMIN')"><a class="btn btn-danger" href="#" th:href="'/reservations/remove/' + ${reservation.id}">Poista vuoro</a></td>
 			</tr>
 		</table>

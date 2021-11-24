@@ -1,0 +1,104 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+	<title>Vuoron pidennys - Saunavaraus</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<link type="text/css" rel="stylesheet" href="bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" />
+	<link type="text/css" rel="stylesheet" href="style.css" th:href="@{/css/style.css}"/>
+	<script type="text/javascript" th:src="@{../js/main.js}"></script>
+</head>
+<body>
+	<div class="main" style="margin: 10px auto; min-width: 800px; max-width: 1200px;">
+		<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+      <a class="navbar-brand" href="#">Saunavaraus.fi</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample04" aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarsExample04">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="/home">Oma asiointi <span class="sr-only">(current)</span></a>
+          </li>
+          <li sec:authorize="hasAuthority('ADMIN')" class="nav-item">
+          	<a class="nav-link" href="/addslot">Vuoron luonti</a>
+          </li>
+          <li sec:authorize="hasAuthority('ADMIN')" class="nav-item">
+          	<a class="nav-link" href="/addsauna">Saunan luonti</a>
+          </li>
+          <li sec:authorize="hasAuthority('ADMIN')" class="nav-item">
+          	<a class="nav-link" href="/management">Vuorohallinta</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Vuorokalenteri</a>
+          </li>
+        </ul>
+        <form class="form-inline my-2 my-md-0" th:action="@{/logout}" method="post">
+			<input type="submit" value="Kirjaudu ulos" class="btn btn-sm btn-danger"/>
+		</form>
+      </div>
+    </nav>
+		<div class="row">
+			<div class="logo col-md-4">
+				<img id="logo" src="https://images.squarespace-cdn.com/content/v1/5e41738478eb0f389ed68695/1616698034590-SNA8F4XYFYFIHZTQ8WX1/sauna-logo.png">
+			</div>
+			<div class="col-md-8">
+				<h1 th:inline="text">Tervetuloa [[${#httpServletRequest.remoteUser}]] !</h1>
+				<p>Hauska nähdä jälleen, tervetuloa varaamaan saunaa.</p>
+			</div>
+		</div>
+		<div class="alert alert-success" role="alert" th:text="${success}" th:if="${success}"></div>
+		<div class="alert alert-danger" role="alert" th:text="${error}" th:if="${error}"></div>
+		<div class="alert alert-info" role="alert">
+		 <h3>Oma vuorosi</h3>
+		 <p>Olet pidentämässä aikaisempaa vuoroasi. Voit jatkaa saunomista aikaisemman tai nykyisen vuorosi jälkeen, mikäli saat varattua vuoron pidennyksen vuorosi jälkeiselle ajankohdalle.</p>
+		 <strong>Vuoron pidennys onnistuu vain samaan saunaan- ja tilaan.</strong>
+		</div>
+		<table class="table table-striped">
+			<tr>
+				<th>Pvm ja aika</th>
+				<th>Sauna</th>
+				<th>Hinta (€)</th>
+			</tr>
+			<tr th:each = "reservation : ${reservedSlot}">
+				<td th:text="${#temporals.format(reservation.datetime, 'dd.MM.yyyy HH:mm')}">klo<p th:text="${#temporals.format(reservation.slot.datetime, 'dd.MM.yyyy HH:mm')}"></p></td>
+				<td th:text="${reservation.sauna.name}"></td>
+				<td th:text="${reservation.price}"></td>
+			</tr>
+		</table>
+		<h3>Vuoron pidennys</h3>
+		<p>Alla näkyvät mahdolliset ajankohdat, joihin voit jatkaa nykyistä vuoroasi. Vuoroa voi jatkaa vain jos aikaisemman vuoron jälkeen on vapaita ajankohtia ja vuorokausi ei ehdi vaihtua.</p>
+		<div th:if="${slots.size() < 1}" class="alert alert-danger" role="alert">
+		  Huomio: <strong>tälle vuorolle ei löytynyt vapaita ajankohtia pidennystä varten.<br>Kaikki mahdolliset vuorot on joko varattuna tai vuorot ovat loppuneet tältä päivältä.</strong>
+		</div>
+		<div th:if="${slots.size() > 0}" class="alert alert-success" role="alert">
+		  Huomio: <strong>vuorosi jatkoksi löytyi vapaita ajankohtia, valitse ajankohta ja paina "pidennä"</strong>
+		</div>
+		<table class="table table-striped">
+			<tr>
+				<th>Pvm ja aika</th>
+				<th>Sauna</th>
+				<th>Koko</th>
+				<th>Kapasiteetti (hlö)</th>
+				<th>Kerhotila</th>
+				<th>Hinta (€)</th>
+				<th></th>
+				<th sec:authorize="hasAuthority('ADMIN')"></th>
+			</tr>
+			<tr th:each = "reservation : ${slots}">
+				<td th:text="${#temporals.format(reservation.datetime, 'dd.MM.yyyy HH:mm')}"></td>
+				<td th:text="${reservation.sauna.name}"></td>
+				<td th:text="${reservation.sauna.size}"></td>
+				<td th:text="${reservation.sauna.capacity}"></td>
+				<td th:switch="${reservation.sauna.clubspace}">
+					<p th:case="0">Ei ole</p>
+				    <p th:case="1">Kyllä</p>
+				</td>
+				<td th:text="${reservation.price}"></td>
+				<td><a class="btn btn-info" href="#" th:href="'/reservations/book/' + ${reservation.id}">Pidennä</a></td>
+				<td sec:authorize="hasAuthority('ADMIN')"><a class="btn btn-danger" href="#" th:href="'/reservations/remove/' + ${reservation.id}">Poista vuoro</a></td>
+			</tr>
+		</table>
+	</div>
+</body>
+</html>

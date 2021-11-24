@@ -1,7 +1,6 @@
 package com.sauna.booking.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,9 +24,12 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException
     {   
     	User curruser = this.repository.findByEmail(username);
-    	System.out.println(username);
-        UserDetails user = new org.springframework.security.core.userdetails.User(username, curruser.getPassword(), 
-        		AuthorityUtils.createAuthorityList(curruser.getGroup()));
-        return user;
+        /*UserDetails user = new org.springframework.security.core.userdetails.User(username, curruser.getPassword(), 
+        		AuthorityUtils.createAuthorityList(curruser.getGroup()));*/
+    	if ( null == curruser || !curruser.getEmail().equals(username) ) {
+    		throw new UsernameNotFoundException("No user found with given username.");
+    	} else {
+    		return new CustomUserDetails(curruser);
+    	}
     } 
 }

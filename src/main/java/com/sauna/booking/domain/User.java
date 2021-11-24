@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name ="users")
@@ -22,21 +23,32 @@ public class User {
 	private String lastname;
 	
     // Unique email per user
+	@JsonIgnore
 	@Column(name = "username", nullable = false, unique = true)
 	private String email;
     
+	@JsonIgnore
     @Column(name = "password", nullable = false)
 	private String password;
     
+	@JsonIgnore
     @Column(name = "usergroup", nullable = false)
 	private String group;
     
     // Apartment and other details
     
 	private String apartment;
+	
+	@JsonIgnore
 	private String phonenumber;
 	
 	public User() {}
+	
+	public User(User user) {
+		this.id = user.getId();
+		this.email = user.getEmail();
+		this.group = user.getGroup();
+	}
 	
 	public User(String email, String password, String group) {
 		this.email = email;
