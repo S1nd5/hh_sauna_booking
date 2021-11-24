@@ -90,9 +90,17 @@ public class ReservationController {
 	@RequestMapping(value="/reservations/remove/{id}", method = RequestMethod.GET)
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public String searchReservation (@PathVariable(value="id") Long id, Model model, RedirectAttributes redirAttrs) throws ParseException {
-		slotRepository.deleteById(id);
-		redirAttrs.addFlashAttribute("success", "Vuoropaikka " + id +  " poistettu järjestelmästä.");
-		return "redirect:/home";
+		Optional<ReservationSlot> slot = slotRepository.findById(id);
+		if ( slot.isPresent()) {
+			Reservation res = reservationRepository.findBySlot(slot.get());
+			reservationRepository.delete(res);
+			slotRepository.deleteById(id);
+			redirAttrs.addFlashAttribute("success", "Vuoropaikka " + id +  " poistettu järjestelmästä.");
+			return "redirect:/home";
+		} else {
+			redirAttrs.addFlashAttribute("error", "Vuoropaikaa ei löytynyt järjestelmästä.");
+			return "redirect:/home";
+		}
 	}
 	
 	@PostMapping(value="/saveslot")
@@ -101,8 +109,16 @@ public class ReservationController {
 		LocalDateTime date = slot.getDatetime().withMinute(0).withSecond(0).withNano(0);
 		List<ReservationSlot> slots = slotRepository.findAllByDatetimeAndSauna(date, slot.getSauna());
 		if ( slots.size() > 0 ) {
-			redirAttrs.addFlashAttribute("error", "Samalle ajankohdalle on jo olemassa rekisteröity vuoro.");
-			return "redirect:/home"; 
+			Long id = slots.get(0).getId();
+			if ( slot.getId() == id) {
+				slot.setDatetime(date);
+				slotRepository.save(slot);
+				redirAttrs.addFlashAttribute("success", "Vuoro tallennettu onnistuneesti järjestelmään.");
+				return "redirect:/home"; 
+			} else {
+				redirAttrs.addFlashAttribute("error", "Samalle ajankohdalle on jo olemassa rekisteröity vuoro.");
+				return "redirect:/home"; 
+			}
 		} else {
 			slot.setDatetime(date);
 			slotRepository.save(slot);

@@ -18,7 +18,11 @@ public interface ReservationDAO extends CrudRepository<Reservation, Long> {
 	
 	Optional<Reservation> findById(Long id);
 	
+	Reservation findBySlot(ReservationSlot slot);
+	
 	public List<Reservation> findAllBySubscriber(User subscriber);
+	
+	public List<Reservation> findAllBySlot(ReservationSlot slot);
 	
 	public List<Reservation> findAll();
 }

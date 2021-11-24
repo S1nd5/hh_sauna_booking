@@ -32,7 +32,7 @@ public class ReservationSlot {
 	private int status;
 	private double price;
 	
-	@OneToMany(mappedBy = "id", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "id", cascade = CascadeType.ALL, orphanRemoval = false)
 	private List<Reservation> reservations;
 	
 	@ManyToOne
