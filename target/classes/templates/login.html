@@ -27,25 +27,24 @@
       </div>
     </nav>
 		<div class="row">
-			<div class="logo col-md-12">
-				<img id="logo" src="https://images.squarespace-cdn.com/content/v1/5e41738478eb0f389ed68695/1616698034590-SNA8F4XYFYFIHZTQ8WX1/sauna-logo.png">
-			</div>
-		</div>
-		<h1>Saunavaraus - Kirjautuminen</h1>
-		<p>Ole hyvä ja jatka kirjautumalla olemassa olevalle tunnukselle tai rekisteröi uusi tunnus. <br><strong>Sähköpostiosoite toimii käyttäjätunnuksena.</strong></p>
-        <div class="alert alert-danger" th:if="${param.error}">
-            Virheellinen käyttäjätunnus ja salasana.
+			<div class="col-md-12">
+				<h1>Saunavaraus - Kirjautuminen</h1>
+				<p>Ole hyvä ja jatka kirjautumalla olemassa olevalle tunnukselle tai rekisteröi uusi tunnus. <br><strong>Sähköpostiosoite toimii käyttäjätunnuksena.</strong></p>
+		        <div class="alert alert-danger" th:if="${param.error}">
+		            Virheellinen käyttäjätunnus ja salasana.
+		        </div>
+		        <div class="alert alert-warning" th:if="${param.logout}">
+		            Olet kirjautunut ulos järjestelmästä.
+		        </div>
+		        <form th:action="@{/login}" method="post">
+		            <div class="input-group mb-3"><label> Käyttäjätunnus: <input type="text" name="username" class="form-control" required/> </label></div>
+		            <div class="input-group mb-3"><label> Salasana: <input type="password" name="password" class="form-control" required/> </label></div>
+		            <div><input type="submit" value="Kirjaudu" class="btn btn-lg btn-primary"/></div>
+		        </form>
+		        <br>
+		        <a class="btn btn-sm btn-info" th:href="@{/register}">Rekisteröidy palveluun</a>
+	        </div>
         </div>
-        <div class="alert alert-warning" th:if="${param.logout}">
-            Olet kirjautunut ulos järjestelmästä.
-        </div>
-        <form th:action="@{/login}" method="post">
-            <div class="input-group mb-3"><label> Käyttäjätunnus: <input type="text" name="username" class="form-control" required/> </label></div>
-            <div class="input-group mb-3"><label> Salasana: <input type="password" name="password" class="form-control" required/> </label></div>
-            <div><input type="submit" value="Kirjaudu" class="btn btn-lg btn-primary"/></div>
-        </form>
-        <br>
-        <a class="btn btn-sm btn-info" th:href="@{/register}">Rekisteröidy palveluun</a>
 	</div>
 </body>
 </html>

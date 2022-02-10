@@ -41,43 +41,42 @@
     </nav>
 		<div class="row">
 			<div class="logo col-md-12">
-				<img id="logo" src="https://images.squarespace-cdn.com/content/v1/5e41738478eb0f389ed68695/1616698034590-SNA8F4XYFYFIHZTQ8WX1/sauna-logo.png">
+			<h3>Lisää sauna</h3>
+			<p>Tällä sivulla voit luoda uuden saunan.</p>
+				<form action="#" th:action="@{/savesauna}" th:object="${sauna}" method="post">
+					<div class="form-group">
+						<label for="name">* Nimi:</label>
+						<input class="form-control" type="text" th:field="*{name}" pattern="^[a-zA-Z ]*$" required/>
+						<span>Pakollinen kenttä.</span><br>
+					</div>
+					<div class="form-group">
+						<label for="staircase">* Rappu:</label>
+						<input class="form-control" type="text" th:field="*{staircase}" pattern="^[a-zA-Z ]*$" required/>
+						<span>Pakollinen kenttä.</span><br>
+					</div>
+					<div class="form-group">
+						<label for="size">* Koko:</label>
+						<input class="form-control" type="text" th:field="*{size}" pattern="^[a-zA-Z ]*$" required/>
+						<span>Pakollinen kenttä.</span><br>
+					</div>
+					<div class="form-group">
+						<label for="ccapacity">* Kapasiteetti(hlö):</label>
+						<input class="form-control" type="number" th:field="*{capacity}" pattern="^[0-9]*$" required/>
+						<span>Pakollinen kenttä.</span><br>
+					</div>
+					<div class="form-group">
+						<label for="name">* Kerhotila:</label>
+						<select name="clubspace" id="clubspace" class="selectpicker form-control form-select" required>
+							<option value="0">Ei kerhotilaa</option>
+							<option value="1">Kerhotila</option>
+						</select>
+					</div>
+					<div th:if="${msg}" th:text="${msg}" class="alert alert-danger" role="alert"></div>
+					<a class="btn btn-info" href="/home">Takaisin</a>
+					<input class="btn btn-success" type="submit" value="Lisää uusi sauna"/>
+				</form>
 			</div>
-		</div>
-		<h3>Lisää sauna</h3>
-		<p>Tällä sivulla voit luoda uuden saunan.</p>
-			<form action="#" th:action="@{/savesauna}" th:object="${sauna}" method="post">
-			<div class="form-group">
-				<label for="name">* Nimi:</label>
-				<input class="form-control" type="text" th:field="*{name}" pattern="^[a-zA-Z ]*$" required/>
-				<span>Pakollinen kenttä.</span><br>
-			</div>
-			<div class="form-group">
-				<label for="staircase">* Rappu:</label>
-				<input class="form-control" type="text" th:field="*{staircase}" pattern="^[a-zA-Z ]*$" required/>
-				<span>Pakollinen kenttä.</span><br>
-			</div>
-			<div class="form-group">
-				<label for="size">* Koko:</label>
-				<input class="form-control" type="text" th:field="*{size}" pattern="^[a-zA-Z ]*$" required/>
-				<span>Pakollinen kenttä.</span><br>
-			</div>
-			<div class="form-group">
-				<label for="ccapacity">* Kapasiteetti(hlö):</label>
-				<input class="form-control" type="number" th:field="*{capacity}" pattern="^[0-9]*$" required/>
-				<span>Pakollinen kenttä.</span><br>
-			</div>
-			<div class="form-group">
-				<label for="name">* Kerhotila:</label>
-				<select name="clubspace" id="clubspace" class="selectpicker form-control form-select" required>
-					<option value="0">Ei kerhotilaa</option>
-					<option value="1">Kerhotila</option>
-				</select>
-			</div>
-			<div th:if="${msg}" th:text="${msg}" class="alert alert-danger" role="alert"></div>
-			<a class="btn btn-info" href="/home">Takaisin</a>
-			<input class="btn btn-success" type="submit" value="Lisää uusi sauna"/>
-		</form> 
+		</div> 
 	</div>
 </body>
 </html>

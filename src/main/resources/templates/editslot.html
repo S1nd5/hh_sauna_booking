@@ -44,39 +44,38 @@
     </nav>
 		<div class="row">
 			<div class="logo col-md-12">
-				<img id="logo" src="https://images.squarespace-cdn.com/content/v1/5e41738478eb0f389ed68695/1616698034590-SNA8F4XYFYFIHZTQ8WX1/sauna-logo.png">
+			<h3>Muokkaa vuoroa</h3>
+			<p>Tällä sivulla voit muokata valitsemasi vuoron sisältöä.</p>
+			<form action="#" th:action="@{/saveslot}" th:object="${slot}" method="post" onSubmit="fillHiddenDate()">
+				<input type="hidden" th:field="*{id}"/>
+				<div class="form-group">
+					<label for="author">* Pvm:</label>
+					<input id="datepicker" pattern="\d{4}-\d{2}-\d{2}" required/>
+					<label for="time">* Klo</label>
+					<input id="timepicker" pattern="^[0-9]{2}$" required/>
+					<span>Pakollinen kenttä.</span><br>
+					<strong>Huom. vuorot ovat tasatunneittain. Älä häiriinny minuuttien valitsemisesta, järjestelmä asettaa vuoron valitulle tasatunnille luonnin yhteydessä.</strong><br>
+					<input id="datetime" class="form-control" type="hidden" step=3600 th:field="*{datetime}"/>
+				</div>
+				<div class="form-group">
+					<label for="author">* Hinta:</label>
+					<input class="form-control" type="text" th:field="*{price}" pattern="\d*[.]?\d+" required/>
+					<span>Pakollinen kenttä.</span><br>
+				</div>
+				<div class="form-group">
+				<label for="saunas">* Sauna</label>
+					<select id="saunas" th:field="*{sauna}" class="form-control" required>
+					 <option th:each="sauna: ${saunas}" th:value="${sauna.id}"
+					 th:text="${sauna.name}"></option>
+					</select>
+					<span>Pakollinen kenttä.</span><br>
+				</div>
+				<div th:if="${msg}" th:text="${msg}" class="alert alert-danger" role="alert"></div>
+				<a class="btn btn-info" href="/home">Takaisin</a>
+				<input class="btn btn-success" type="submit" value="Tallenna"/>
+			</form> 
 			</div>
 		</div>
-		<h3>Muokkaa vuoroa</h3>
-		<p>Tällä sivulla voit muokata valitsemasi vuoron sisältöä.</p>
-		<form action="#" th:action="@{/saveslot}" th:object="${slot}" method="post" onSubmit="fillHiddenDate()">
-			<input type="hidden" th:field="*{id}"/>
-			<div class="form-group">
-				<label for="author">* Pvm:</label>
-				<input id="datepicker" pattern="\d{4}-\d{2}-\d{2}" required/>
-				<label for="time">* Klo</label>
-				<input id="timepicker" pattern="^[0-9]{2}$" required/>
-				<span>Pakollinen kenttä.</span><br>
-				<strong>Huom. vuorot ovat tasatunneittain. Älä häiriinny minuuttien valitsemisesta, järjestelmä asettaa vuoron valitulle tasatunnille luonnin yhteydessä.</strong><br>
-				<input id="datetime" class="form-control" type="hidden" step=3600 th:field="*{datetime}"/>
-			</div>
-			<div class="form-group">
-				<label for="author">* Hinta:</label>
-				<input class="form-control" type="text" th:field="*{price}" pattern="\d*[.]?\d+" required/>
-				<span>Pakollinen kenttä.</span><br>
-			</div>
-			<div class="form-group">
-			<label for="saunas">* Sauna</label>
-				<select id="saunas" th:field="*{sauna}" class="form-control" required>
-				 <option th:each="sauna: ${saunas}" th:value="${sauna.id}"
-				 th:text="${sauna.name}"></option>
-				</select>
-				<span>Pakollinen kenttä.</span><br>
-			</div>
-			<div th:if="${msg}" th:text="${msg}" class="alert alert-danger" role="alert"></div>
-			<a class="btn btn-info" href="/home">Takaisin</a>
-			<input class="btn btn-success" type="submit" value="Tallenna"/>
-		</form> 
 	</div>
 </body>
 </html>

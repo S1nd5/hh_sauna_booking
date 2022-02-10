@@ -42,7 +42,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
         .csrf().ignoringAntMatchers("/nocsrf","/api/**")
         .and()
-        .authorizeRequests().antMatchers("/css/**").permitAll()
+        .authorizeRequests().antMatchers("/css/**", "/js/**", "/images/**").permitAll()
         .and()
         .authorizeRequests().antMatchers("/register", "/registeruser", "/calendar", "/reservations/search", "/api/", "/api/**").permitAll()
         .and()
